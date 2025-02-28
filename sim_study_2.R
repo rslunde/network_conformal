@@ -103,9 +103,9 @@ for(ii in 1:B) {
   pred_par_3 = predict(my_model_3,newdata=my_data_test,interval="prediction",alpha =0.9)
   
   # Store Gaussian linear model prediction intervals
-  lm_1_normal_pi_mat[ii,] = pred_par_1[2:3]
-  lm_2_normal_pi_mat[ii,] = pred_par_2[2:3]
-  lm_3_normal_pi_mat[ii,] = pred_par_3[2:3]
+  lm_1_normal_cp_mat[ii,] = pred_par_1[2:3]
+  lm_2_normal_cp_mat[ii,] = pred_par_2[2:3]
+  lm_3_normal_cp_mat[ii,] = pred_par_3[2:3]
   
   # Run conformal prediction
   cp_radius_1 = quantile(abs(my_data_calib$Y - predict(my_model_1,newdata=my_data_calib)),0.9*(1+1/(n_train-1)))

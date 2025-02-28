@@ -111,3 +111,30 @@ for(ii in 1:B){
     cp_mat_spline[ii,] = spline_cp
   
   }
+
+# The following code produces conditional coverage plots
+require(ggplot2)
+
+# Compute coverage for conformal prediction intervals
+cp_cond_cov = check_coverage(cp_mat_cond,Y_test_vec)
+cp_lm_cov = check_coverage(cp_mat_lm,Y_test_vec)
+cp_spline_cov = check_coverage(cp_mat_spline,Y_test_vec)
+
+# Fit smoothing splines to estimate coverage probability as a function of z
+spline_cond = smooth.spline(x=degree_vec,y=cp_cond_cov)
+spline_lm = smooth.spline(x=degree_vec,y=cp_lm_cov)
+spline_spline = smooth.spline(x=degree_vec,y=cp_spline_cov)
+
+# Create data frame for ggpplot
+y_vals = c(spline_cond$y, spline_lm$y, spline_spline$y)
+x_vals = rep(spline_cond$x,3)
+method= c(rep("Conditional CDF",B), rep("Linear Model",B),rep("Spline",B))
+plot_data_frame = data.frame(y_vals,method,x_vals)
+
+# Create ggplot object
+p = ggplot(data = plot_data_frame, aes(x=x_vals, y = y_vals, group=method)) +
+  geom_line(aes(linetype=method,color=method))+
+  geom_hline(yintercept=0.9,linetype="dotted") +
+  labs(x="z", y="coverage") + ylim(0.15, 1.1) + xlim(0.25,0.5)+
+  theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
+        panel.background = element_blank(), axis.line = element_line(colour = "black"))
